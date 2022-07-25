@@ -11,7 +11,7 @@ contract ERC20Token{
   uint public decimal = 18;
   uint public totalSupply;    //How much tokens the founder owned
   address public founder;   //Address of the owner of the Token
-  mapping(address => uint) public balances;
+  mapping(address => uint) balances;
   mapping(address => mapping(address => uint)) allowed;
 
   event Transfer(address indexed from, address indexed to, uint tokens);
