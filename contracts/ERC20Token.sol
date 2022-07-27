@@ -8,7 +8,7 @@ contract ERC20Token{
   string public name = "DANKUSH";   //Name of the Token
   string public symbol = "DANK";    //Symbol of the Token
 
-  uint public decimal = 18;
+  uint public decimal = 0;
   uint public totalSupply;    //How much tokens the founder owned
   address public founder;   //Address of the owner of the Token
   mapping(address => uint) balances;
