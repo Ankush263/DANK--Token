@@ -17,14 +17,13 @@ function App() {
   const [showBal, setShowBal] = useState(0)
 
   // const contractAddress = signerAddress
+  const deployAddress = "0x0D56A460CCe9E627EE30494A1e3757c5504b91d2"
   const contractAddress = signerAddress
   const abi = ABI.abi
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   // setAddress(contractAddress)
   
-
-
 
 
   
@@ -67,7 +66,7 @@ function App() {
           params: {
             type: 'ERC20', 
             options: {
-              address: tokenAddress, 
+              address: deployAddress, 
               symbol: tokenSymbol, 
               decimals: tokenDecimals, 
             },
@@ -92,25 +91,43 @@ function App() {
 
   
   const freeTokens = async () => {
-    // const contract = new ethers.Contract(contractAddress, abi, signer)
-
+    const contract = new ethers.Contract(contractAddress, abi, signer)
+    
+    
     try {
-      if (typeof window.ethereum !== 'undefined') {
-        const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(contractAddress, abi, signer);
-        contract.faucet(account[0], 100);
-        // console.log(account[0])
-      }
+      
+      const Faucet = await contract.faucet(
+        contractAddress,
+        100
+      )
+
+      Faucet.wait()
+
     } catch (error) {
       console.log(error)
     }
     
   }
+  // const freeTokens = async () => {
+  //   // const contract = new ethers.Contract(contractAddress, abi, signer)
+
+  //   try {
+  //     if (typeof window.ethereum !== 'undefined') {
+  //       const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  //       const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //       const signer = provider.getSigner();
+  //       const contract = new ethers.Contract(deployAddress, abi, signer);
+  //       contract.faucet(account[0], 100);
+  //       // console.log(account[0])
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+    
+  // }
 
   const checkBalance = async () => {
-    const contract = new ethers.Contract(contractAddress, abi, signer)
+    const contract = new ethers.Contract(deployAddress, abi, signer)
     console.log(checkAddress)
     try {
       const addr = await contract.balanceOf(
@@ -118,20 +135,26 @@ function App() {
       )
       const tokens = addr.toNumber()
       setShowBal(tokens)
-      console.log(addr)
+      console.log(tokens)
     } catch (error) {
       console.log(error)
     }
   }
 
+  const requestAccount = async () => {
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+  }
+
   const transferToken = async () => {
-    const contract = new ethers.Contract(contractAddress, abi, signer)
+    const contract = new ethers.Contract(deployAddress, abi, signer)
     
     try {
-      await contract.transfer(
+      await requestAccount()
+      const transaction = await contract.transfer(
         sendAddress,
         sendAmount
       )
+      await transaction.wait()
     } catch (error) {
       console.log(error)
     }
