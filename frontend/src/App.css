@@ -12,7 +12,7 @@
 .card--first {
   position: relative;
   width: 40rem;
-  min-height: 90px;
+  min-height: 35px;
   background: rgba(225, 225, 225, 0.5);
   box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(225, 225, 225, 0.5);
@@ -134,6 +134,10 @@
   color: #3c4fe0;
   font-size: 60px;
   font-weight: 700;
+}
+
+.top {
+  display: flex;
 }
 
 .faucet {
