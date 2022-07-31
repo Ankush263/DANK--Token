@@ -68,7 +68,7 @@ function App() {
 
       const tokenSymbol = "DANK"    // Token Symbol
 
-      const tokenDecimals = 2
+      const tokenDecimals = 0.3
           
       try {
 
@@ -111,6 +111,8 @@ function App() {
 
   const freeTokens = async () => {
 
+    document.querySelector('.btn').disabled = true
+
     const contract = new ethers.Contract(deployAddress, abi, signer)
     
     try {
@@ -122,6 +124,8 @@ function App() {
       )
 
       Faucet.wait()
+
+      document.querySelector('.btn').disabled = false
 
     } catch (error) {
 
@@ -149,6 +153,8 @@ function App() {
       const tokens = addr.toNumber()
 
       setShowBal(tokens)
+
+      setCheckAddress('')
 
     } catch (error) {
 
@@ -183,12 +189,16 @@ function App() {
 
       await transaction.wait()
 
+      setSendAddress('')
+
+      setSendAmount('')
+
     } catch (error) {
 
       console.log(error)
 
     }
-    
+
   }
 
 
@@ -209,7 +219,7 @@ function App() {
 
           <input type="text" className='transfer--input' onChange={(e) => setSignerAddress(e.target.value)} value={signerAddress} />
 
-          <p className='faucet--txt'>Get your free DAnkush tokens here! Claim 100 DANK coins(1) to your account.</p>
+          <p className='faucet--txt'>Get your free DAnkush tokens here! Claim 100 DANK coins to your account.</p>
 
           
           <button className='btn' onClick={freeTokens}>Gimme gimme</button>
@@ -233,7 +243,7 @@ function App() {
               <input type="number" className='transfer--input' onChange={(e) => setSendAmount(e.target.value)} value={sendAmount} />
             </label>
           </div>
-          <button className="btn" onClick={transferToken}>Transfer</button>
+          <button className='btn' onClick={transferToken}>Transfer</button>
         </div>
       </div>
 }
