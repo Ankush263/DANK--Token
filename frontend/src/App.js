@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { ethers } from 'ethers';
 import ABI from './artifacts/contracts/ERC20Token.sol/DANKToken.json'
 
-
 import A_logo from './images/A-logo1.png'
 import faucet_logo from './images/faucet.png'
 
@@ -15,17 +14,11 @@ function App() {
   const [sendAddress, setSendAddress] = useState("")
   const [sendAmount, setSendAmount] = useState(0)
   const [showBal, setShowBal] = useState(0)
+  const deployAddress = "0xBDAAeBb02aA4966F90Db6f149011A84615c9d531"
 
-  // const contractAddress = signerAddress
-  const deployAddress = "0x0D56A460CCe9E627EE30494A1e3757c5504b91d2"
-  const contractAddress = signerAddress
   const abi = ABI.abi
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
-  // setAddress(contractAddress)
-  
-
-
   
   
   const Connect = async () => {
@@ -46,17 +39,11 @@ function App() {
   }
 
 
-
-
-
-
 //Needed function
 
 
   useEffect(() => {
     const foo = async () => {
-      // const tokenAddress = "0x93046Cab079d9c8241c01bF20D72b102dADce92C"
-      const tokenAddress = await signer.getAddress()
       const tokenSymbol = "DANK"
       const tokenDecimals = 2
           
@@ -68,7 +55,7 @@ function App() {
             options: {
               address: deployAddress, 
               symbol: tokenSymbol, 
-              decimals: tokenDecimals, 
+              decimals: tokenDecimals,
             },
           },
         });
@@ -91,40 +78,24 @@ function App() {
 
   
   const freeTokens = async () => {
-    const contract = new ethers.Contract(contractAddress, abi, signer)
+    const contract = new ethers.Contract(deployAddress, abi, signer)
     
     
     try {
-      
       const Faucet = await contract.faucet(
-        contractAddress,
+        signerAddress,
         100
       )
 
       Faucet.wait()
+      // console.log(faucetBal)
 
     } catch (error) {
       console.log(error)
     }
     
   }
-  // const freeTokens = async () => {
-  //   // const contract = new ethers.Contract(contractAddress, abi, signer)
 
-  //   try {
-  //     if (typeof window.ethereum !== 'undefined') {
-  //       const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
-  //       const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //       const signer = provider.getSigner();
-  //       const contract = new ethers.Contract(deployAddress, abi, signer);
-  //       contract.faucet(account[0], 100);
-  //       // console.log(account[0])
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-    
-  // }
 
   const checkBalance = async () => {
     const contract = new ethers.Contract(deployAddress, abi, signer)
@@ -178,7 +149,7 @@ function App() {
 
           <input type="text" className='transfer--input' onChange={(e) => setSignerAddress(e.target.value)} value={signerAddress} />
 
-          <p className='faucet--txt'>Get your free DAnkush tokens here! Claim 100 DANK coins to your account.</p>
+          <p className='faucet--txt'>Get your free DAnkush tokens here! Claim 100 DANK coins(1) to your account.</p>
 
           
           <button className='btn' onClick={freeTokens}>Gimme gimme</button>
