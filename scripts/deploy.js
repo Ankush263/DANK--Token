@@ -1,27 +1,24 @@
-// scripts/deploy.js
-
 const hre = require("hardhat");
 
 async function main() {
-  // We get the contract to deploy.
-  const SendETH = await hre.ethers.getContractFactory("ERC20Token");
-  const sendETH = await SendETH.deploy();
+  const [deployer] = await hre.ethers.getSigners();
 
-  await sendETH.deployed();
+  console.log(
+    "Deploying contracts with the account:",
+    deployer.address
+  );
 
-  console.log("SendETH deployed to:", sendETH.address);
+  const DANKToken = await hre.ethers.getContractFactory("DANKToken");
+  const dANKToken = await DANKToken.deploy("DANKUSH", "DANK");
+
+  await dANKToken.deployed();
+
+  console.log("Token deployed to:", dANKToken.address);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });
-
-
-
-  //https://eth-goerli.g.alchemy.com/v2/Eo_3ejyNS3BznBvx9EFOpEQNLvWsDsqV
-
