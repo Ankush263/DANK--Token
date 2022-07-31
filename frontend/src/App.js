@@ -8,46 +8,70 @@ import faucet_logo from './images/faucet.png'
 
 function App() {
 
-  const [logedIn, setLogedIn] = useState(false)
-  const [signerAddress, setSignerAddress] = useState("")
-  const [checkAddress, setCheckAddress] = useState("")
-  const [sendAddress, setSendAddress] = useState("")
-  const [sendAmount, setSendAmount] = useState(0)
-  const [showBal, setShowBal] = useState(0)
-  const deployAddress = "0xBDAAeBb02aA4966F90Db6f149011A84615c9d531"
+  const [logedIn, setLogedIn] = useState(false)   // This shows that the user is logged in or not
+
+  const [signerAddress, setSignerAddress] = useState("")    // This shows and set the user's address
+
+  const [checkAddress, setCheckAddress] = useState("")    // This takes the address including user to check the balances of DANK Tokens
+
+  const [sendAddress, setSendAddress] = useState("")    // This takes the address, whome you want to send the DANK Tokens
+
+  const [sendAmount, setSendAmount] = useState(0)   // This takes the amount value you want to send the other users
+
+  const [showBal, setShowBal] = useState(0)   // By this you can show the balance in the account address
+
+  const deployAddress = "0xBDAAeBb02aA4966F90Db6f149011A84615c9d531"    // This is the address where the token has deployed
+
 
   const abi = ABI.abi
+
   const provider = new ethers.providers.Web3Provider(window.ethereum)
+
   const signer = provider.getSigner()
+
   
-  
+
+  // By this connect function you can connect your wallet
+
   const Connect = async () => {
+
     document.querySelector('.button').disabled = true
     
     try {
+
       if (typeof window.ethereum !== 'undefined') {
       
         await window.ethereum.request({ method: 'eth_requestAccounts' })
-        const Address = await signer.getAddress()
+
+        const Address = await signer.getAddress()   // Here you got the signer Address
+
         setSignerAddress(Address)
+
         setLogedIn(true)
 
       }
+
     } catch (error) {
-      console.log("bbbb", error)
+
+      console.log("Connect Error: ", error)
+
     }
+
   }
 
 
-//Needed function
-
+  // An RPC method for allowing users to easily track new assets with a suggestion from sites they are visiting
 
   useEffect(() => {
-    const foo = async () => {
-      const tokenSymbol = "DANK"
+
+    const Asset = async () => {
+
+      const tokenSymbol = "DANK"    // Token Symbol
+
       const tokenDecimals = 2
           
       try {
+
         const wasAdded = window.ethereum.request({
           method: 'wallet_watchAsset',
           params: {
@@ -61,74 +85,110 @@ function App() {
         });
           
         if (wasAdded) {
+
           console.log('Thanks for your interest!');
+
         } else {
+
           console.log('Your loss!');
+
         }
+
       } catch (error) {
-          console.log(error)
+
+        console.log(error)
+
       }
+
     }
-    foo()
+
+    Asset()
+
   }, [logedIn])
 
 
-//Needed function
+  // By this freeTokens() function user can get 100 free tokens
 
-
-  
   const freeTokens = async () => {
+
     const contract = new ethers.Contract(deployAddress, abi, signer)
-    
     
     try {
       const Faucet = await contract.faucet(
+
         signerAddress,
         100
+
       )
 
       Faucet.wait()
-      // console.log(faucetBal)
 
     } catch (error) {
-      console.log(error)
+
+      console.log("freeToken Error: ", error)
+
     }
     
   }
 
+
+  // By this user can check DANK Token balance
 
   const checkBalance = async () => {
+
     const contract = new ethers.Contract(deployAddress, abi, signer)
-    console.log(checkAddress)
+
     try {
+
       const addr = await contract.balanceOf(
+
         checkAddress
+
       )
+
       const tokens = addr.toNumber()
+
       setShowBal(tokens)
-      console.log(tokens)
+
     } catch (error) {
+
       console.log(error)
+
     }
+
   }
+
 
   const requestAccount = async () => {
+
     await window.ethereum.request({ method: 'eth_requestAccounts' });
+
   }
 
+
+  // By this you can transfer tokens to different address
+
   const transferToken = async () => {
+
     const contract = new ethers.Contract(deployAddress, abi, signer)
     
     try {
+
       await requestAccount()
+
       const transaction = await contract.transfer(
         sendAddress,
         sendAmount
       )
+
       await transaction.wait()
+
     } catch (error) {
+
       console.log(error)
+
     }
+    
   }
 
 
